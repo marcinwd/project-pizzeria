@@ -78,18 +78,42 @@
       /*add element to menu*/
       menuContainer.appendChild(thisProduct.element);
     }
-    
 
     initAccordion(){
       const thisProduct = this;
-    }
-  };
+    /* find the clickable trigger (the element that should react to clicking) */
+    const trigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+    console.log(trigger);
+    /* START: click event listener to trigger */
+    trigger.addEventListener('click', function(event){
+      /* prevent default action for event */
+      event.preventDefault();
+      /* toggle active class on element of thisProduct (use toggle function)*/
+      thisProduct.element.classList.toggle('active');
+      /* find all active products */
+      const activeProducts = document.querySelectorAll('.product');
+      console.log(activeProducts)
+      /* START LOOP: for each active product */
+      for(let activeProduct of activeProducts){
+        console.log(activeProduct);
+        /* START: if the active product isn't the element of thisProduct */
+        if (activeProduct != thisProduct.element){
+          /* remove class active for the active product */
+          activeProduct.classList.remove('active');
+        /* END: if the active product isn't the element of thisProduct */
+        }
+      /* END LOOP: for each active product */
+       }
+     }
+     /* END: click event listener to trigger */
+     )}
+    };
 
   const app = {
     //instancja do klasy Product
     initMenu: function(){
       const thisApp = this;
-      console.log('thisApp: ',thisApp.data);
+      //console.log('thisApp: ',thisApp.data);
       //START LOOP creating an instance to each product
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
