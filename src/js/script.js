@@ -91,11 +91,10 @@
       /* toggle active class on element of thisProduct (use toggle function)*/
       thisProduct.element.classList.toggle('active');
       /* find all active products */
-      const activeProducts = document.querySelectorAll('.product');
-      console.log(activeProducts)
+      const activeProducts = document.querySelectorAll(select.all.menuProductsActive);
+      console.log(activeProducts);
       /* START LOOP: for each active product */
       for(let activeProduct of activeProducts){
-        console.log(activeProduct);
         /* START: if the active product isn't the element of thisProduct */
         if (activeProduct != thisProduct.element){
           /* remove class active for the active product */
@@ -113,7 +112,6 @@
     //instancja do klasy Product
     initMenu: function(){
       const thisApp = this;
-      //console.log('thisApp: ',thisApp.data);
       //START LOOP creating an instance to each product
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
