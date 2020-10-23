@@ -64,6 +64,7 @@
       thisProduct.getElements(); 
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
+      thisProduct.initAmountWidget();
       thisProduct.processOrder();
 
       
@@ -86,19 +87,13 @@
       const thisProduct = this;
 
       thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable); 
-      //console.log(thisProduct.accordionTrigger);// '.product__header'
-
       thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
-      //console.log(thisProduct.form);//'.product__order',
-
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
-      //console.log(thisProduct.formInputs);//'input, select'
-
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
-      //console.log(thisProduct.imageWrapper); '.product__images'
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
+      //console.log(thisProduct.amountWidgetElem);
     }
     
 
@@ -149,7 +144,12 @@
         event.preventDefault();
         thisProduct.processOrder();
       });
+    }
 
+    initAmountWidget(){
+      const thisProduct = this;
+
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
     }
 
     //mod 8.5 
@@ -159,47 +159,38 @@
 
       thisProduct.params = {};
       
-
       /* read all data from the form (using utils.serializeFormToObject) and save it to const formData */
       const formData = utils.serializeFormToObject(thisProduct.form);
-      console.log('formData:', formData);
 
       /* set variable price to equal thisProduct.data.price */
       let price = thisProduct.data.price;
-      console.log('price;', price);
 
       /* START LOOP: for each paramId in thisProduct.data.params */
       for(let paramId in thisProduct.data.params){
         /* save the element in thisProduct.data.params with key paramId as const param */
         const param = thisProduct.data.params[paramId];
-        console.log('param:', param);
 
         /* START LOOP: for each optionId in param.options */
         for(let optionId in param.options){
           /* save the element in param.options with key optionId as const option */
           const option = param.options[optionId];
-          console.log(option);
 
           /* START IF: if option is selected and option is not default */
           const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
-          console.log('selected option: ', optionSelected);
           if(optionSelected && !option.default){  
             /* add price of option to variable price */
             price += option.price;
-            console.log('price if: ', price);
             /* END IF: if option is selected and option is not default */
           }
           /* START ELSE IF: if option is not selected and option is default */
           else if(!optionSelected && option.default){
             /* deduct price of option from price */
             price -= option.price;
-            console.log('price else:', price);
             /*END else if*/
           }
-          /*START IF/ELSE: visible not visible pics*/
+          /*START IF/ELSE mod 8.6: visible not visible pics*/
           /* create const with ALL images*/
           const images = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
-          console.log(images);
           
           //if the option is selected
           if(optionSelected){
@@ -220,7 +211,6 @@
               image.classList.remove(classNames.menuProduct.imageVisible);
             }
           }
-          console.log(thisProduct.params);
           /*END LOOP optionId*/
         }
         /*END LOOP paramId*/
@@ -228,9 +218,41 @@
       /* set the contents of thisProduct.priceElem to be the value of variable price */
       thisProduct.priceElem.innerHTML = price;
     }
-
   };
 
+  //mod 8.7
+  class AmountWidget{
+    constructor(element){
+      const thisWidget = this;
+
+      thisWidget.getElements(element);
+      thisWidget.setValue(thisWidget.input.value);
+
+      console.log('AmountWidget: ', thisWidget);
+      console.log('constructor arguments: ', element);
+    }
+
+    getElements(element){
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+
+    setValue(value){
+      const thisWidget = this;
+
+      const newValue = parseInt(value);
+
+      //TODO: Add validation
+
+      thisWidget.value = newValue;
+      thisWidget.input.value = thisWidget.value;
+
+    }
+  }
 
   const app = {
     //instancja do klasy Product
