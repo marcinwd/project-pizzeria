@@ -92,11 +92,13 @@
       //console.log(thisProduct.form);//'.product__order',
 
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
-      //console.log(thisProduct.formInputs)//'input, select'
+      //console.log(thisProduct.formInputs);//'input, select'
 
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-      
+
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      //console.log(thisProduct.imageWrapper); '.product__images'
     }
     
 
@@ -155,6 +157,9 @@
       const thisProduct = this;
       console.log('processOrder: ', this);
 
+      thisProduct.params = {};
+      
+
       /* read all data from the form (using utils.serializeFormToObject) and save it to const formData */
       const formData = utils.serializeFormToObject(thisProduct.form);
       console.log('formData:', formData);
@@ -190,7 +195,32 @@
             price -= option.price;
             console.log('price else:', price);
             /*END else if*/
-          }    
+          }
+          /*START IF/ELSE: visible not visible pics*/
+          /* create const with ALL images*/
+          const images = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
+          console.log(images);
+          
+          //if the option is selected
+          if(optionSelected){
+            if(!thisProduct.params[paramId]){
+              thisProduct.params[paramId] = {
+                label: param.label,
+                options: {},
+              };
+            }
+            thisProduct.params[paramId].options[optionId] = option.label;
+            //add class active
+            for(let image of images){
+              image.classList.add(classNames.menuProduct.imageVisible);
+            }
+          } else {
+            //remove class active
+            for(let image of images){
+              image.classList.remove(classNames.menuProduct.imageVisible);
+            }
+          }
+          console.log(thisProduct.params);
           /*END LOOP optionId*/
         }
         /*END LOOP paramId*/
