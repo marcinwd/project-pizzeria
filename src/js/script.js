@@ -104,6 +104,7 @@
     //console.log(trigger);
     /* START: click event listener to trigger */
     trigger.addEventListener('click', function(event){
+      //console.log(click);
       /* prevent default action for event */
       event.preventDefault();
       /* toggle active class on element of thisProduct (use toggle function)*/
@@ -227,6 +228,7 @@
 
       thisWidget.getElements(element);
       thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions();
 
       console.log('AmountWidget: ', thisWidget);
       console.log('constructor arguments: ', element);
@@ -237,7 +239,9 @@
 
       thisWidget.element = element;
       thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      console.log(thisWidget.input);
       thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      console.log(thisWidget.linkDecrease);
       thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
     }
 
@@ -249,9 +253,40 @@
       //TODO: Add validation
 
       thisWidget.value = newValue;
+      this.announce();
       thisWidget.input.value = thisWidget.value;
+      console.log(thisWidget.value);
 
     }
+
+    initActions(){
+      const thisWidget = this;
+
+      //value change in the widget after manual input
+      thisWidget.input.addEventListener('change', function(){
+        thisWidget.setValue(thisWidget.input.value);
+      })
+
+      //value increase after widget 'click' '+'
+      thisWidget.linkIncrease.addEventListener('click', function(event){
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value + 1);
+      })
+
+      //value decrease after widget 'click' '-'
+      thisWidget.linkDecrease.addEventListener('click', function(event){
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value - 1);
+      })
+        }
+
+    announce(){
+      const thisWidget = this;
+
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
+    }
+
   }
 
   const app = {
