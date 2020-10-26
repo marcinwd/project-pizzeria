@@ -151,6 +151,10 @@
       const thisProduct = this;
 
       thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+
+      thisProduct.amountWidgetElem.addEventListener('updated', function(){
+        thisProduct.processOrder();
+      });
     }
 
     //mod 8.5 
@@ -216,6 +220,8 @@
         }
         /*END LOOP paramId*/
       }
+      //multiply price by amount
+      price *= thisProduct.amountWidget.value;
       /* set the contents of thisProduct.priceElem to be the value of variable price */
       thisProduct.priceElem.innerHTML = price;
     }
@@ -227,6 +233,9 @@
       const thisWidget = this;
 
       thisWidget.getElements(element);
+
+      thisWidget.value = settings.amountWidget.defaultValue;
+
       thisWidget.setValue(thisWidget.input.value);
       thisWidget.initActions();
 
@@ -239,9 +248,7 @@
 
       thisWidget.element = element;
       thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
-      console.log(thisWidget.input);
       thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
-      console.log(thisWidget.linkDecrease);
       thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
     }
 
@@ -250,13 +257,12 @@
 
       const newValue = parseInt(value);
 
-      //TODO: Add validation
-
-      thisWidget.value = newValue;
-      this.announce();
+      //validation
+      if(newValue != thisWidget.value && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax){
+        thisWidget.value = newValue;
+        this.announce();
+      } 
       thisWidget.input.value = thisWidget.value;
-      console.log(thisWidget.value);
-
     }
 
     initActions(){
@@ -266,13 +272,11 @@
       thisWidget.input.addEventListener('change', function(){
         thisWidget.setValue(thisWidget.input.value);
       })
-
       //value increase after widget 'click' '+'
       thisWidget.linkIncrease.addEventListener('click', function(event){
         event.preventDefault();
         thisWidget.setValue(thisWidget.value + 1);
       })
-
       //value decrease after widget 'click' '-'
       thisWidget.linkDecrease.addEventListener('click', function(event){
         event.preventDefault();
@@ -286,7 +290,6 @@
       const event = new Event('updated');
       thisWidget.element.dispatchEvent(event);
     }
-
   }
 
   const app = {
