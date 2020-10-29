@@ -357,8 +357,8 @@
 
       thisCart.dom = {};
       thisCart.dom.wrapper = element;
-      thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
-      thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
+      thisCart.dom.toggleTrigger = element.querySelector(select.cart.toggleTrigger);
+      thisCart.dom.productList = element.querySelector(select.cart.productList);
     }
 
     initActions() {
@@ -376,10 +376,8 @@
 
       //with tempates handlebars create a HTML and add it to a const
       const generatedHTML = templates.cartProduct(menuProduct);
-      console.log(generatedHTML);
       //with function creatDOM in utils, generate a DOM  
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
-      console.log(generatedDOM);
       //ADD the DOM element to thisCart.dom.productList
       thisCart.dom.productList.appendChild(generatedDOM);
 
@@ -402,7 +400,9 @@
 
       thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
 
+      thisCartProduct.initAmountWidget();
       thisCartProduct.getElements(element);
+      
 
       console.log('thisCartProduct: ', thisCartProduct);
     }
@@ -412,12 +412,26 @@
 
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
-      thisCartProduct.dom.amountWidget = element.querySelector(select.cartProduct.amountWidgetElem);
+      thisCartProduct.dom.amountWidget = element.querySelector(select.cartProduct.amountWidget);
       thisCartProduct.dom.price = element.querySelector(select.cartProduct.price);
       thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
       thisCartProduct.dom.remove = element.querySelector(select.cartProduct.remove);
     }
+
+    initAmountWidget() {
+      const thisCartProduct = this;
+
+      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
+        //thisCartProduct.processOrder();
+        thisCartProduct.amount = thisCartProduct.amount.value;
+        thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
+      }); 
+    }
   }
+
 
   const app = {
     //instancja do klasy Product
