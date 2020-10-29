@@ -376,14 +376,16 @@
 
       //with tempates handlebars create a HTML and add it to a const
       const generatedHTML = templates.cartProduct(menuProduct);
+      console.log(generatedHTML);
       //with function creatDOM in utils, generate a DOM  
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+      console.log(generatedDOM);
       //ADD the DOM element to thisCart.dom.productList
       thisCart.dom.productList.appendChild(generatedDOM);
 
       console.log('adding product: ', menuProduct);
 
-      thisCart.products.push(menuProduct);
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
       console.log(thisCart.products);
     }
   }
