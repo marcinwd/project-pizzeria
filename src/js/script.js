@@ -270,8 +270,6 @@
       thisProduct.amount = thisProduct.amountWidget.value;
 
       app.cart.add(thisProduct);
-
-
     }
   }
 
@@ -400,8 +398,9 @@
 
       thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
 
-      thisCartProduct.initAmountWidget();
+     
       thisCartProduct.getElements(element);
+      thisCartProduct.initAmountWidget();
       
 
       console.log('thisCartProduct: ', thisCartProduct);
@@ -412,7 +411,9 @@
 
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
+      console.log(element);
       thisCartProduct.dom.amountWidget = element.querySelector(select.cartProduct.amountWidget);
+      console.log(thisCartProduct.dom.amountWidget);
       thisCartProduct.dom.price = element.querySelector(select.cartProduct.price);
       thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
       thisCartProduct.dom.remove = element.querySelector(select.cartProduct.remove);
@@ -422,9 +423,9 @@
       const thisCartProduct = this;
 
       thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
-
+      console.log(thisCartProduct.amountWidget);
       thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
-        //thisCartProduct.processOrder();
+
         thisCartProduct.amount = thisCartProduct.amount.value;
         thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
