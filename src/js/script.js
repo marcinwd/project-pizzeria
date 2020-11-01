@@ -59,11 +59,9 @@
       wrapperActive: 'active',
       imageVisible: 'active',
     },
-    // CODE ADDED START
     cart: {
       wrapperActive: 'active',
     },
-    // CODE ADDED END
   };
 
   const settings = {
@@ -72,11 +70,15 @@
       defaultMin: 1,
       defaultMax: 9,
     },
-    // CODE ADDED START
     cart: {
       defaultDeliveryFee: 20,
     },
-    // CODE ADDED END
+    db: {
+      url: '//127.0.0.1:9000', 
+      product: 'product',
+      order: 'order',
+    }
+    
   };
 
   const templates = {
@@ -319,7 +321,7 @@
       });
     }
 
-    announce() { 
+    announce() {
       const thisWidget = this;
 
       //const event = new Event('updated');
@@ -340,7 +342,7 @@
       thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
 
       console.log('new cart: ', thisCart);
-      
+
     }
 
     getElements(element) {
@@ -366,11 +368,11 @@
         event.preventDefault();
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
-      thisCart.dom.productList.addEventListener('updated', function(){
+      thisCart.dom.productList.addEventListener('updated', function () {
         thisCart.update();
       });
 
-      thisCart.dom.productList.addEventListener('remove', function() {
+      thisCart.dom.productList.addEventListener('remove', function () {
         thisCart.remove(event.detail.cartProduct);
       });
 
@@ -409,8 +411,8 @@
       }
       thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
 
-      for (let key of thisCart.renderTotalsKeys){
-        for (let elem of thisCart.dom[key]){
+      for (let key of thisCart.renderTotalsKeys) {
+        for (let elem of thisCart.dom[key]) {
           elem.innerHTML = thisCart[key];
         }
       }
@@ -427,11 +429,11 @@
       cartProduct.dom.wrapper.remove();
       thisCart.update();
     }
-    
+
   }
-  
+
   class CartProduct {
-    constructor (menuProduct, element) {
+    constructor(menuProduct, element) {
       const thisCartProduct = this;
 
       thisCartProduct.id = menuProduct.id;
@@ -441,11 +443,11 @@
       thisCartProduct.amount = menuProduct.amount;
 
       thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
-    
+
       thisCartProduct.getElements(element);
       thisCartProduct.initAmountWidget();
       thisCartProduct.initActions();
-      
+
       console.log('thisCartProduct: ', thisCartProduct);
     }
 
@@ -465,21 +467,21 @@
       const thisCartProduct = this;
 
       thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
-      
+
       thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
         thisCartProduct.amount = thisCartProduct.amountWidget.value; //brakowalo Widget w amount
         thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
-      }); 
+      });
     }
 
     remove() {
       const thisCartProduct = this;
 
       const event = new CustomEvent('remove', {
-        bubbles: true, 
+        bubbles: true,
         detail: {
-          cartProduct: thisCartProduct, 
+          cartProduct: thisCartProduct,
         },
       });
       thisCartProduct.dom.wrapper.dispatchEvent(event);
@@ -489,13 +491,13 @@
     initActions() {
       const thisCartProduct = this;
 
-      thisCartProduct.dom.edit.addEventListener('click', function(event) {
+      thisCartProduct.dom.edit.addEventListener('click', function (event) {
         event.preventDefault();
       });
-      thisCartProduct.dom.remove.addEventListener('click', function(event) {
+      thisCartProduct.dom.remove.addEventListener('click', function (event) {
         event.preventDefault();
         thisCartProduct.remove();
-        console.log('click', thisCartProduct.remove() );
+        console.log('click', thisCartProduct.remove());
       });
     }
   }
@@ -514,7 +516,11 @@
     // taking data from data.js-> dataSource.Products
     initData: function () {
       const thisApp = this;
-      thisApp.data = dataSource;
+      //thisApp.data = dataSource; //change from mod 9.7 below
+      thisApp.data = {};
+      const url = settings.db.url + '/' + settings.db.product;
+      console.log('url: ', url);
+
     },
 
     initCart: function () {
