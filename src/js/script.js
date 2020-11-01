@@ -73,6 +73,7 @@
     cart: {
       defaultDeliveryFee: 20,
     },
+    //mod 9.7 IN PROGRESS
     db: {
       url: '//127.0.0.1:9000', 
       product: 'product',
@@ -83,9 +84,7 @@
 
   const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
-    // CODE ADDED START
     cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
-    // CODE ADDED END
   };
 
   //creating a class Product
@@ -521,6 +520,19 @@
       const url = settings.db.url + '/' + settings.db.product;
       console.log('url: ', url);
 
+    
+      fetch(url)
+        .then(function(rawResponse){
+          return rawResponse.json();
+        })
+        .then(function(parsedResponse){
+          console.log('parsedResponse: ', parsedResponse);
+
+          //save parsedResponse as thisApp.data.products
+
+          // execute initMenu method
+        });
+      console.log('thisApp.data', JSON.stringify(thisApp.data));
     },
 
     initCart: function () {
@@ -529,6 +541,7 @@
       const cartElem = document.querySelector(select.containerOf.cart);
       thisApp.cart = new Cart(cartElem);
     },
+  
 
     init: function () {
       const thisApp = this;
