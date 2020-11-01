@@ -507,7 +507,9 @@
       const thisApp = this;
       //START LOOP creating an instance to each product
       for (let productData in thisApp.data.products) {
-        new Product(productData, thisApp.data.products[productData]);
+        //new Product(productData, thisApp.data.products[productData]);
+        //NEW mod9.7 API
+        new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
         //END LOOP
       }
     },
@@ -529,8 +531,10 @@
           console.log('parsedResponse: ', parsedResponse);
 
           //save parsedResponse as thisApp.data.products
+          parsedResponse = thisApp.data.products;
 
           // execute initMenu method
+          thisApp.initMenu();
         });
       console.log('thisApp.data', JSON.stringify(thisApp.data));
     },
@@ -552,7 +556,7 @@
       console.log('templates:', templates);
 
       thisApp.initData();
-      thisApp.initMenu();
+      //thisApp.initMenu(); DEL mod9.7
       thisApp.initCart();
     },
   };
