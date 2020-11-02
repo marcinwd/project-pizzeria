@@ -73,7 +73,6 @@
     cart: {
       defaultDeliveryFee: 20,
     },
-    //mod 9.7 IN PROGRESS
     db: {
       url: '//127.0.0.1:9000', 
       product: 'product',
@@ -351,11 +350,11 @@
       thisCart.dom.wrapper = element;
       thisCart.dom.toggleTrigger = element.querySelector(select.cart.toggleTrigger);
       thisCart.dom.productList = element.querySelector(select.cart.productList);
-
       thisCart.renderTotalsKeys = ['totalNumber', 'totalPrice', 'subtotalPrice', 'deliveryFee'];
       for (let key of thisCart.renderTotalsKeys) {
         thisCart.dom[key] = thisCart.dom.wrapper.querySelectorAll(select.cart[key]);
       }
+      thisCart.dom.form = element.querySelector(select.cart.form);
     }
 
     initActions() {
@@ -370,12 +369,13 @@
       thisCart.dom.productList.addEventListener('updated', function () {
         thisCart.update();
       });
-
       thisCart.dom.productList.addEventListener('remove', function () {
         thisCart.remove(event.detail.cartProduct);
       });
-
-
+      thisCart.dom.form.addEventListener('submit', function (){
+        event.preventDefault();
+        thisCart.sendOrder();
+      });
     }
 
     add(menuProduct) {
@@ -429,6 +429,31 @@
       thisCart.update();
     }
 
+    sendOrder(){
+      const thisCart = this;
+
+      const url = settings.db.url + '/' + settings.db.order;
+      console.log('sendOrder URL: ', url);
+
+      const payload = {
+        address: 'test',
+        totalPrice: thisCart.totalPrice,
+      };
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      };
+      fetch(url, options)
+        .then(function(response){
+          return response.json();
+        })
+        .then(function(parsedResponse){
+          console.log('parsedResponse: ', parsedResponse);
+        });
+    }
   }
 
   class CartProduct {
@@ -508,7 +533,6 @@
       //START LOOP creating an instance to each product
       for (let productData in thisApp.data.products) {
         //new Product(productData, thisApp.data.products[productData]);
-        //NEW mod9.7 API
         new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
         //END LOOP
       }
@@ -556,7 +580,6 @@
       console.log('templates:', templates);
 
       thisApp.initData();
-      //thisApp.initMenu(); DEL mod9.7
       thisApp.initCart();
     },
   };
