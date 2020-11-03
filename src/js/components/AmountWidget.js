@@ -1,5 +1,5 @@
-import {settings, select} from '../settings.js';
- 
+import { settings, select } from '../settings.js';
+
 //mod 8.7
 class AmountWidget {
   constructor(element) {

@@ -107,7 +107,7 @@ export const settings = {
     tableIdAttribute: 'data-table',
   },
   db: {
-    url: '//127.0.0.1:9000', 
+    url: '//127.0.0.1:9000',
     product: 'product',
     order: 'order',
     booking: 'booking',
@@ -117,7 +117,7 @@ export const settings = {
     notRepeatParam: 'repeat=false',
     repeatParam: 'repeat_ne=false',
   }
-    
+
 };
 export const templates = {
   menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
