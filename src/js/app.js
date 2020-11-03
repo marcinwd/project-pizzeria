@@ -1,8 +1,18 @@
 import {settings, select, classNames} from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
+import Booking from './components/Booking.js';
 
 const app = {
+  
+  initBooking: function(){
+    const thisApp = this;
+
+    const booking = document.querySelector(select.containerOf.booking);
+    thisApp.booking = new Booking(booking);
+  },
+
+
   initPages: function (){
     const thisApp = this;
 
@@ -37,6 +47,7 @@ const app = {
 
     
   },
+
   activatePage: function(pageId){
     const thisApp = this;
 
@@ -66,7 +77,6 @@ const app = {
     }
   },
 
-  // taking data from data.js-> dataSource.Products
   initData: function () {
     const thisApp = this;
     //thisApp.data = dataSource; //change from mod 9.7 below
@@ -111,6 +121,7 @@ const app = {
     thisApp.initPages();
     thisApp.initData();
     thisApp.initCart();
+    thisApp.initBooking();
   },
 };
 app.init();
