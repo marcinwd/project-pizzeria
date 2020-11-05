@@ -1,4 +1,4 @@
-import {settings, select, classNames, templates} from '../settings.js';
+import { settings, select, classNames, templates } from '../settings.js';
 import utils from '../utils.js';
 import CartProduct from '../components/CartProduct.js';
 
@@ -11,7 +11,7 @@ class Cart {
     thisCart.initActions();
     thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
 
-    console.log('new cart: ', thisCart);
+    //console.log('new cart: ', thisCart);
 
   }
 
@@ -46,7 +46,7 @@ class Cart {
     thisCart.dom.productList.addEventListener('remove', function () {
       thisCart.remove(event.detail.cartProduct);
     });
-    thisCart.dom.form.addEventListener('submit', function (){
+    thisCart.dom.form.addEventListener('submit', function () {
       event.preventDefault();
       thisCart.sendOrder();
     });
@@ -66,7 +66,7 @@ class Cart {
 
     thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
     //console.log(thisCart.products);
-    thisCart.update(); 
+    thisCart.update();
   }
 
   update() {
@@ -100,7 +100,7 @@ class Cart {
     thisCart.update();
   }
 
-  sendOrder(){
+  sendOrder() {
     const thisCart = this;
 
     const url = settings.db.url + '/' + settings.db.order;
@@ -116,7 +116,7 @@ class Cart {
       product: [],
     };
 
-    for(let cartProduct of thisCart.products){
+    for (let cartProduct of thisCart.products) {
       cartProduct.getData();
       payload.product.push(cartProduct.getData());
     }
@@ -129,10 +129,10 @@ class Cart {
       body: JSON.stringify(payload),
     };
     fetch(url, options)
-      .then(function(response){
+      .then(function (response) {
         return response.json();
       })
-      .then(function(parsedResponse){
+      .then(function (parsedResponse) {
         console.log('parsedResponse: ', parsedResponse);
       });
   }
