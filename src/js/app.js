@@ -82,7 +82,7 @@ const app = {
     //thisApp.data = dataSource; //change from mod 9.7 below
     thisApp.data = {};
     const url = settings.db.url + '/' + settings.db.product;
-    console.log('url: ', url);
+    //console.log('url: ', url);
 
 
     fetch(url)
