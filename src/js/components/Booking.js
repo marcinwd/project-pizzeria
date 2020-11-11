@@ -11,6 +11,7 @@ class Booking {
     thisBooking.render(element);
     thisBooking.initWidgets();
     thisBooking.getData();
+    thisBooking.bookTable();
   }
 
   getData() {
@@ -43,8 +44,6 @@ class Booking {
       eventsRepeat: settings.db.url + '/' + settings.db.event + '?' + params.eventsRepeat.join('&'),
     };
     // console.log(' getData urls: ', urls);
-
-
 
     Promise.all([
       fetch(urls.booking),
@@ -92,7 +91,6 @@ class Booking {
         }
       }
     }
-
     // console.log('thisBooking.booked: ', thisBooking.booked);
     thisBooking.updateDOM();
   }
@@ -169,7 +167,11 @@ class Booking {
 
     thisBooking.dom.tables = element.querySelectorAll(select.booking.tables);
     // console.log('thisBooking.dom.tables: ', thisBooking.dom.tables);
-
+    // zad mod 11.2 odnosniki do danych 
+    thisBooking.dom.form = element.querySelector(select.booking.form);
+    thisBooking.dom.phone = element.querySelector(select.booking.phone);
+    thisBooking.dom.address = element.querySelector(select.booking.address);
+    thisBooking.dom.starter = element.querySelector(select.booking.starter);
   }
 
   initWidgets() {
@@ -183,6 +185,58 @@ class Booking {
     thisBooking.dom.wrapper.addEventListener('updated', function () {
       thisBooking.updateDOM();
     });
+    // zad mod 11.2 - wybor stolika
+    /*for (let table of thisBooking.dom.tables) {
+      table.addEventListener('click', function () {
+        console.log('table: ', table);
+
+        thisBooking.tablePick(table);
+      });
+    }*/
+  }
+
+  // zad mod 11.2 - wybor stolika
+  /*tablePick(table) {
+    const thisBooking = this;
+    // jezeli stolik zarezerwowany daj INFO
+    if (table.classList.contains(classNames.booking.tableBooked)) {
+      alert('TABLE ALREADY BOOKED');
+    } else (!table.classList.contains(classNames.booking.tableBooked){
+      alert ('YOU CAN BOOK THIS TABLE')
+    }
+
+    }
+
+
+  }*/
+  // zad mod 11.2 eventListener do przycisku wysyłającego booking
+  bookTable() {
+    const thisBooking = this;
+
+    thisBooking.dom.form.addEventListener('submit', function () {
+      event.preventDefault();
+      thisBooking.sendBooking();
+    });
+  }
+
+  sendBooking() {
+    const thisBooking = this;
+
+    const url = settings.db.url + '/' + settings.db.booking;
+    console.log('sendBooking URL: ', url);
+
+    const payload = {
+      date: thisBooking.dom.datePicker.value,
+      time: thisBooking.dom.hourPicker.value,
+      table: [], // tu bedzie selectTable(); dajacy wartosc tableId
+      people: thisBooking.dom.peopleAmount.value,
+      hours: thisBooking.dom.hoursAmount.value,
+      starters: [], // tablica w zaleznosci od wyboru
+      phone: thisBooking.dom.phone,
+      address: thisBooking.dom.address,
+    };
+    console.log('payload: ', payload);
+
 
   }
 
