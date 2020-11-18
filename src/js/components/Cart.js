@@ -84,6 +84,7 @@ class Cart {
     for (let key of thisCart.renderTotalsKeys) {
       for (let elem of thisCart.dom[key]) {
         elem.innerHTML = thisCart[key];
+        console.log(this.renderTotalsKeys);
       }
     }
   }

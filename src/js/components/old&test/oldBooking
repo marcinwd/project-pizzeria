@@ -1,8 +1,4 @@
-import { templates, select, settings, classNames } from '../settings.js';
-import utils from '../utils.js';
-import AmountWidget from './AmountWidget.js';
-import DatePicker from './DatePicker.js';
-import HourPicker from './HourPicker.js';
+
 
 class Booking {
   constructor(element) {
@@ -11,59 +7,75 @@ class Booking {
     thisBooking.render(element);
     thisBooking.initWidgets();
     thisBooking.getData();
-    thisBooking.bookTable(); // usunac po presunieciu do initWidget
-    thisBooking.selectTable();
+    //thisBooking.bookTable();
+    //thisBooking.selectTable();
   }
 
-  selectTable(table) {
-    const thisBooking = this;
-
-    for (let table of thisBooking.dom.tables) {
-      table.addEventListener('click', function (event) {
-        event.preventDefault();
-        console.log('table clicked');
-
-        let tableId = table.getAttribute(settings.booking.tableIdAttribute);
-
-        if (!table.classList.contains(classNames.booking.tableBooked)) {
-          alert('the table has been booked');
-          thisBooking.tableSelected = tableId;
-        }
-
-        if (table.classList.comtains(classNames.booking.tableBooked)) {
-          alert('THIS TABLE IS ALREADY BOOKED, CHOOSE ANOTHER ONE.');
-
-        }
-
-
-
-      });
-    }
-
-    let clickedTableId = table.getAttribute(settings.booking.tableIdAttribute);
-
-    if (table.classList.contains(classNames.booking.tableBooked)) {
-      alert('TABLE ALREADY BOOKED, PLEASE CHOOSE ANOTHER ONE');
-    } else {
-      table.classList.add(classNames.booking.tableBooked);
-      alert('Table has been booked');
-      thisBooking.clickedTableId = table.getAttribute(settings.booking.tableIdAttribute);
-    }
-  }
-
-  // zad mod 11.2 eventListener do przycisku wysyłającego booking
-  // !! przesunac do init widget
+  /*// zad mod 11.2 eventListener do przycisku wysyłającego booking
   bookTable() {
     const thisBooking = this;
 
     thisBooking.dom.form.addEventListener('submit', function (event) {
       event.preventDefault();
-      console.log('mod 11.2 form submit: ', 'submit');
       thisBooking.sendBooking();
     });
   }
 
+  sendBooking() {
+    const thisBooking = this;
+    console.log(this);
 
+    const url = settings.db.url + '/' + settings.db.booking;
+
+    const payload = {
+      date: thisBooking.date,
+      hour: thisBooking.hour, // zmiana na wartosc bez utils.numberToHour
+      table: parseInt(thisBooking.clickedTableId),
+      duration: thisBooking.hoursAmount.value,
+      ppl: thisBooking.peopleAmount.value,
+      phone: thisBooking.dom.phone.value,
+      address: thisBooking.dom.address.value,
+      starters: [],
+    };
+    console.log('payload: ', payload.table);
+
+    for (let chooseStarter of thisBooking.dom.starter) {
+      if (chooseStarter.checked) {
+        payload.starters.push(chooseStarter.value);
+      }
+    }
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
+    fetch(url, options)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (parseResponse) {
+        console.log('parseResponse: ', parseResponse);
+      });
+
+    //location.reload();
+
+  }
+
+  // zad mod 11.2 - wybor stolika
+  selectTable(table) {
+    const thisBooking = this;
+
+    if (table.classList.contains(classNames.booking.tableBooked)) {
+      alert('TABLE ALREADY BOOKED, CHOOSE ANOTHER ONE');
+    } else {
+      table.classList.add(classNames.booking.tableBooked);
+      thisBooking.clickedTableId = table.getAttribute(settings.booking.tableIdAttribute);
+
+    }
+  }*/
 
   getData() {
 
@@ -95,8 +107,6 @@ class Booking {
       eventsRepeat: settings.db.url + '/' + settings.db.event + '?' + params.eventsRepeat.join('&'),
     };
     // console.log(' getData urls: ', urls);
-
-
 
     Promise.all([
       fetch(urls.booking),
@@ -144,13 +154,13 @@ class Booking {
         }
       }
     }
-
     // console.log('thisBooking.booked: ', thisBooking.booked);
     thisBooking.updateDOM();
   }
 
   makeBooked(date, hour, duration, table) {
     const thisBooking = this;
+    console.log(this);
 
     if (typeof thisBooking.booked[date] == 'undefined') {
       thisBooking.booked[date] = {};
@@ -159,19 +169,23 @@ class Booking {
     const startHour = utils.hourToNumber(hour);
 
     for (let hourBlock = startHour; hourBlock < startHour + duration; hourBlock += 0.5) {
-      // console.log('loop: ', hourBlock);
       if (typeof thisBooking.booked[date][hourBlock] == 'undefined') {
         thisBooking.booked[date][hourBlock] = [];
       }
-
       thisBooking.booked[date][hourBlock].push(table);
-
     }
   }
 
   updateDOM() {
     const thisBooking = this;
-    console.log('updateDOM is working');
+    ('updateDOM działa', thisBooking);
+
+    /*//mod 11.2
+    const activeTable = thisBooking.dom.wrapper.querySelector(settings.booking.tableIdAttribute);
+    if (activeTable) {
+      activeTable.classList.remove(settings.booking.tableIdAttribute);
+    }
+    thisBooking.tableId = null;*/
 
     thisBooking.date = thisBooking.datePicker.value;
     thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
@@ -202,8 +216,6 @@ class Booking {
         table.classList.remove(classNames.booking.tableBooked);
       }
     }
-    //console.log('updateDOM: ', thisBooking.date);
-    //console.log('updateDOM: ', thisBooking.hour);
   }
 
   render(element) {
@@ -222,9 +234,11 @@ class Booking {
     thisBooking.dom.hourPicker = element.querySelector(select.widgets.hourPicker.wrapper);
 
     thisBooking.dom.tables = element.querySelectorAll(select.booking.tables);
-    // mod 11.2 
-    thisBooking.dom.form = element.querySelector(select.booking.form);
-
+    // zad mod 11.2 odnosniki do danych 
+    //thisBooking.dom.form = element.querySelector(select.booking.form);
+    //thisBooking.dom.phone = thisBooking.dom.form.querySelector(select.booking.phone);
+    //thisBooking.dom.address = thisBooking.dom.form.querySelector(select.booking.address);
+    //thisBooking.dom.starter = thisBooking.dom.form.querySelectorAll(select.booking.starters);
   }
 
   initWidgets() {
@@ -238,7 +252,21 @@ class Booking {
     thisBooking.dom.wrapper.addEventListener('updated', function () {
       thisBooking.updateDOM();
     });
+    /*// zad mod 11.2 - wybor stolika
+    for (let table of thisBooking.dom.tables) {
+      table.addEventListener('click', function () {
+        console.log('table: ', table);
+
+        thisBooking.selectTable(table);
+      });
+    }*/
   }
 
+
+
+
+
+
+
 }
-export default Booking;
+//  export default Booking;
